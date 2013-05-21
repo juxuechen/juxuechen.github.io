@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>模板代码工具</title>
+</head>
+ 
+<body>
+<form>
+    名称(英文)<input type="text" id="name" value="item"/><br />
+    标题(英文)<input type="text" id="title" value="hk"/><br />
+    组别(英文)<input type="text" id="group" value="group"/><br />
+    中文占位名称(逗号间隔)<input type="text" id="cnames" value="图片,链接"/><br />
+    英文占位名称(逗号间隔)<input type="text" id="enames" value="img,URL"/><br />
+    <button type="button" onclick="clicccc()">生成代码!</button><br />
+</form>
+</body>
+
+
+<textarea type="text" id="code"  style="height:400px; width:1000px;" />
+</textarea>
+
+
+<script type="text/javascript">
+
+function clicccc() {
+
+var name = document.getElementById('name').value;
+var title = document.getElementById('title').value;
+var group = document.getElementById('group').value;
+var cnames = document.getElementById('cnames').value;
+var cnameArray = cnames.split(",");
+var enames = document.getElementById('enames').value;
+var enameArray = enames.split(",");
+	
+
+var fileds = "";
+for (var i=0;i<cnameArray.length;i++)
+{
+	fileds += enameArray[i]+':'+cnameArray[i]+':string';
+}
+
+
+var ctr = "";
+for (var i=0;i<cnameArray.length;i++)
+{
+	ctr += '<td>'+cnameArray[i]+'</td>';
+}
+
+
+var etr = "";
+for (var i=0;i<enameArray.length;i++)
+{
+	etr += '<td>$!section.'+enameArray[i]+'</td>';
+}
+
+
+var data = "";
+for (var i=0;i<enameArray.length;i++)
+{
+	data += '\t"'+enameArray[i]+' => "$!section.'+enameArray[i]+'",\n';
+}
+
+	document.getElementById('code').value = '<cms:custom name="'+name+'" title="'+title+'" fields="'+fileds+'" group="'+group+'" row="1" defaultRow="1">\n'+
+	'<\?php if($__REQUEST[\'envMode\'] === \'edit\'): \?>\n'+
+	'\t<table id=\'list\'>\n'+
+	'\t\t<tr>'+ctr+'</tr>\n'+
+	'\t\t#foreach ($section in $customList)\n'+
+	'\t\t\t<tr>'+etr+'</tr>\n'+
+	'\t\t#end\n\t</table>\n<\? else:\n\?>\n#foreach ($section in $customList)\n<\?\n'+
+	'$'+group+'[] = array(\n'+data+');\n\?>\n#end\n<\?\nendif \n\?>\n</cms:custom>';
+	
+}
+
+
+</script>
+
+
+</html>
+
+

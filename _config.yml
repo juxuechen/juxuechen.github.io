@@ -1,1 +1,4 @@
-auto:YES
+safe: true
+lsi: true
+pygments: true
+destination: ./_site

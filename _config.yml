@@ -1,9 +1,6 @@
-markdown: kramdown
+auto: true
+server: true
+markdown: rdiscount
+pygments: true
+permalink: pretty
 
-exclude:
-  - attic
-  - README.md
-
-
-safe: true
-lsi: false

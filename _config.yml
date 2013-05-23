@@ -1,4 +1,2 @@
-safe: true
-lsi: true
+markdown: rdiscount
 pygments: true
-destination: ./_site

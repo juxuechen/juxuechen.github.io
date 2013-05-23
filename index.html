@@ -1,31 +1,12 @@
 ---
 layout: default
-title: 我的Blog
+title: SonsyFish
 ---
-<div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/juxuechen">View on GitHub</a>
-          <h1 id="project_title">
-            <img 
-              src="http://tp3.sinaimg.cn/1858707374/180/5647447792/0"
-              style="width: 180px; height: 180px; float: left; border: none; box-shadow: none;"
-            />
-            <span style="position: relative; top: 30px; left: 10px"> Marie Cat </span>
-          </h1>
-          <h2 id="project_tagline" style="clear: left;">iOS Programmer
-          </h2>
-          <h3 id="project_tagline" style="clear: left;">I like eating, singing, sleeping and Pump it up!
-          </h3>
-          <h4>
-          <a href="http://weibo.com/juxuechen">Weibo 琚雪要吃荔枝</a>
-          </h4>
+###最新文章
 
-        </header>
-</div>
-<h2>{{ page.title }}</h2>
-<p>最新文章</p>
 <ul>
 {% for post in site.posts %}
 <li>{{ post.date | date_to_string }} <a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
 {% endfor %}
 </ul>
+

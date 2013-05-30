@@ -59,7 +59,7 @@ for (var i=0;i<enameArray.length;i++)
 var data = "";
 for (var i=0;i<enameArray.length;i++)
 {
-	data += '\t"'+enameArray[i]+' => "$!section.'+enameArray[i]+'",\n';
+	data += '\t"'+enameArray[i]+'" => "$!section.'+enameArray[i]+'",\n';
 }
 
 	document.getElementById('code').value = '<cms:custom name="'+name+'" title="'+title+'" fields="'+fileds+'" group="'+group+'" row="1" defaultRow="1">\n'+

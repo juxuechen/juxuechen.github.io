@@ -8,11 +8,11 @@
  
 <body>
 <form>
-    名称(英文)<input type="text" id="name" value="item"/><br />
-    标题(英文)<input type="text" id="title" value="hk"/><br />
-    组别(英文)<input type="text" id="group" value="group"/><br />
-    中文占位名称(逗号间隔)<input type="text" id="cnames" value="图片,链接" charset="utf-8"/><br />
-    英文占位名称(逗号间隔)<input type="text" id="enames" value="img,URL"/><br />
+    模板名(英文)<input type="text" id="name" value="actImage"/><br />
+    标题(英文)<input type="text" id="title" value="活动入口"/><br />
+    组别(英文)<input type="text" id="group" value="cp"/><br />
+    中文占位名称(逗号间隔)<input type="text" style="width:500px;" id="cnames" value="图片,链接" charset="utf-8"/><br />
+    英文占位名称(逗号间隔)<input type="text" style="width:500px;" id="enames" value="img,URL"/><br />
     <button type="button" onclick="clicccc()">生成代码!</button><br />
 </form>
 </body>
@@ -38,7 +38,7 @@ var enameArray = enames.split(",");
 var fileds = "";
 for (var i=0;i<cnameArray.length;i++)
 {
-	fileds += enameArray[i]+':'+cnameArray[i]+':string';
+	fileds += enameArray[i]+':'+cnameArray[i]+':string,';
 }
 
 
@@ -62,14 +62,14 @@ for (var i=0;i<enameArray.length;i++)
 	data += '\t"'+enameArray[i]+'" => "$!section.'+enameArray[i]+'",\n';
 }
 
-	document.getElementById('code').value = '<cms:custom name="'+name+'" title="'+title+'" fields="'+fileds+'" group="'+group+'" row="1" defaultRow="1">\n'+
+	document.getElementById('code').value = '<cms:custom name="'+name+'" title="'+title+'" fields="'+fileds+'" group="'+group+'" row="100" defaultRow="1">\n'+
 	'<\?php if($__REQUEST[\'envMode\'] === \'edit\'): \?>\n'+
 	'\t<table id=\'list\'>\n'+
 	'\t\t<tr>'+ctr+'</tr>\n'+
 	'\t\t#foreach ($section in $customList)\n'+
 	'\t\t\t<tr>'+etr+'</tr>\n'+
 	'\t\t#end\n\t</table>\n<\? else:\n\?>\n#foreach ($section in $customList)\n<\?\n'+
-	'$'+group+'[] = array(\n'+data+');\n\?>\n#end\n<\?\nendif \n\?>\n</cms:custom>';
+	'$'+name+'[] = array(\n'+data+');\n\?>\n#end\n<\?\nendif \n\?>\n</cms:custom>';
 	
 }
 

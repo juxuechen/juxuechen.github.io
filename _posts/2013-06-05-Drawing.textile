@@ -50,10 +50,12 @@ Drawing with UIKit
 在iPhone0S3.2之后，苹果增加了UIBezierPath使绘画容易与之前。UIKit仍然缺乏支持线、渐变、阴影和一些高级的功能,如控制抗锯齿和精确的色彩管理。即便如此，UIKit是现在最方便方式用来处理最常见绘图的需要。
 
 最常见的是用UIRectFrame或UIRectFill绘画举行。代码如下：
+<code>
 - (void)drawRect:(CGRect)rect {
   [[UIColor redColor] setFill];
   UIRectFill(CGRectMake(10, 10, 100, 100));
 }
+<code>
 注意，第一次绘画设置颜色。在调用drawRect之前，画布已经通过系统完成一个图形上下文。这个上下文包括一些包括颜色，字体等信息。在任何时间只有一个描边笔和一个填充笔，他们的颜色用来画所有内容。
 Paths
 UIBezierPath有简单的数据方法处理最常见的路径，线、弧、矩形(可选圆形),椭圆形。

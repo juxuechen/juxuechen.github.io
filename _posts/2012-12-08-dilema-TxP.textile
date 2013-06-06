@@ -1,0 +1,21 @@
+---
+layout: post
+title: Dilema Textpattern
+---
+
+Sudah memakai Textpattern sejak hampir 6 tahun yang lalum, dan baru kali ini mengalami susahnya mencari <i>Web Hosting</i> yang bisa penuh support ke TxP di Indonesia.
+
+Terakhir kali install ( 1 hari yg lalu ), banyak sekali penambahan fungsi di TxP, semakin kaya dengan fitur dan kesempatan, namun tentu saja semakin rewel meminta standar yg harus dipenuhi.
+
+Mencoba di host di Qwords, dan ternyata gagal, ada fungsi PHP yg di<i>disabled</i> sehingga TxP tidak bisa berjalan dengan baik. Bahkan dimulai pada saat menginstall. setelah proses memasukkan detik DB dan membuat isi file <code>config.php</code>, ternyata sistem tidak bisa mempopulasi DB SQL dengan baik.
+
+Alhasil, user tidak bisa login dengan credentials yg suda disetting, User perlu memperbaiki DB SQL dan membuat table secara manual. Dan ini tentu berat untuk sebagian user.
+
+Softaculous, dengan aplikasi CPanel ini, memang bisa memuat textpattern dengan baik, installasi lancar dan bisa login. Namun tetap saja ada masalah. Di Diagnostic Tab, ada error  : <code>Internal error "gzinflate() has been disabled for security reasons".</code> . Dan yakin pasti ada errors lainnya yang akan mengikuti.
+
+Sudah mengontak Layanan Teknis, dan mendapatkan 2 solusi hebat dari mereka. Yaitu :
+
+1. Ganti CMS lain
+2. Upgrade paket ke Dedicated Server.
+
+Baik. Keren. Dan aye lebih suka menambahkan pilihan ke-3 : Ganti layanan Hosting. fnd

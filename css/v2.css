@@ -1,0 +1,188 @@
+
+
+#main { 
+        width: 960px;
+        margin: 0px auto;
+        }
+        
+#e404 {
+        width: 500px;
+        margin: 0px auto;
+        }    
+        
+        #content404 {
+                    margin: 20px auto;
+                    }    
+        
+         #content404 h2 {
+                font-family: 'PT Sans Narrow', sans-serif; 
+                font-size: 20px;
+                font-weight: 800;
+                text-transform: uppercase;
+                margin-bottom: 24px;
+                line-height: 22px;
+                color: #373737;
+                text-align: left;
+	            }  
+                        
+                #header {
+                    width: 500px;
+                    margin: 0px auto;
+                    font-family: 'PT Sans Narrow', sans-serif;
+                    font-size: 16px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    color: #111111;
+                    line-height: 22px;
+                    }
+                    
+                    
+                        nav {
+                            font-size: 14px;
+                            line-height: 12px;
+                            }
+                          nav ul {
+                            list-style: none;
+                            margin: 0;
+                            padding: 0;
+                                  }
+                          nav li {
+                            display: inline-block;
+                            margin-right: 20px;
+                                 }
+                          nav a {
+                            text-decoration: none;
+                            color: #888;
+                               }
+                          nav a:hover, nav a:focus {
+                            color: #e1523d;
+                                  }
+                          nav .selected > a {
+                            color: #e1523d;
+                            text-decoration: none;
+                                  }
+                                            
+           #content {
+                    margin-top: 40px;
+                    }    
+                      
+           #content h1, #content h2, #content h3, #content h4, #content p, #content p.meta { 
+                margin: 0px auto; 
+                width: 960px;     
+                text-align: center;      
+                                 }
+                            
+           #content a, #content404 a {
+                color: #e1523d;
+                text-decoration: none;
+                }                 
+                 
+                 #content a:hover, #content404 a:hover {
+                            text-decoration: underline;
+                            }
+                            
+                 #content a:visited, #content404 a:visited { 
+                            color: #e1523d;
+                            }     
+                            
+                 #content b {
+                            font-family: 'PT Sans Narrow', sans-serif; 
+                            font-size: 15px;
+                            }              
+                               
+            #content p.meta {
+                font-size: 11px;
+                color: #555;
+                margin-bottom: 20px;
+                               }
+                               
+                          
+                     
+            #content  p, p.fndr, #content404 p, #content .highlight {
+               font-family: 'Enriqueta', Georgia, Times New Roman, Times, serif;
+               font-family: Georgia, 'Times New Roman', Times, serif; 
+                width: 500px;
+                margin-bottom: 24px;
+                font-size: 15px;
+                line-height: 22px;
+                color: #373737;
+                text-align: justify;
+	            }
+	                
+	                #content img.left {
+	                            float: left;
+	                            margin-bottom: 24px;
+	                            padding-right: 10px;
+	                            } 
+	                            
+	                #content img.right {
+	                            float: right;
+   	                            margin-bottom: 24px;
+   	                            padding-left: 10px;
+	                            }   
+	                            
+	                #content img.center {
+	                            float: left;
+	                            margin-bottom: 24px;
+	                            }                       
+	                    
+	                      #content h2 {
+	                            font-family: Helvetica, 'Helvetica Neue', Arial, Geneva, sans-serif;
+	                            font-size: 24px;
+	                            font-weight: 600;
+	                            margin-top: 10px;
+	                            line-height: 33px;
+	                            color: #373737;
+	                            }
+	                            
+	                            h2.error { 
+	                                text-align: left;
+	                                }
+	                                
+	                     #content404 .contact {
+	                         margin: 0px auto;
+	                         width: 200px;
+	                         float: left;
+                             margin-right: 10px;
+                                  }          
+	                     
+	                 #content ol, #cotent ul {
+	                            width: 500px;
+	                            font-family: 'Enriqueta', Georgia, Times New Roman, Times, serif; 
+	                            margin: 0px auto;
+	                            margin-bottom: 16px;      
+	                            }
+	                            
+	                            #content ol li, #content ul li {
+	                                    line-height: 22px;
+	                                    font-size: 15px;
+	                                    color: #373737;
+	                                    margin-bottom: 18px;
+	                            }
+	                            
+	                            	                            
+	                 ul.posts {
+	                      width: 500px;
+	                      font-family: 'Enriqueta', Georgia, Times New Roman, Times, serif; 
+	                      margin: 0px auto;
+                          list-style-type: none;
+                          margin-bottom: 2em;
+                             }
+
+                          ul.posts li {
+                            line-height: 1.75em;
+                            font-size:15px;
+                                   }
+
+                          ul.posts span {
+                            color: #373737;
+                            font-family: 'PT Sans Narrow', sans-serif; 
+                            font-size: 82%;
+                                 }
+
+	                            
+	    #footer {
+                margin-top: 30px;
+                margin-bottom: 15px;
+                border-top: 1px solid #ccc;
+                }

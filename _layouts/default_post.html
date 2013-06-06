@@ -22,52 +22,39 @@
    <!-- Some JS -->
    <script src="/js/jquery-1.8.1.min.js"></script>
  </head>
-<body id="e404">
+<body id="main">
 
     <div id="header">
          <h1>fana direktori .in</h1>
             <nav>
-			<ul>
-				<li class="selected"><a href="/">About</a></li>
-				<li><a href="/blog">Blog</a></li>
+			    <ul>
+				<li><a href="/">About</a></li>
+				<li class="selected"><a href="/blog">Blog</a></li>
 				<li><a href="http://fanadir.in/atom.xml">Feed</a></li>
-			</ul>
+			    </ul>
 		</nav>
          
     </div>     
 
-    <div id="content404">
-     <p>Hai, aye Kusaeni yang <a href="http://kusaeni.com">lain</a>. Ini adalah blogkus dibangun dengan <a href="http://jekyllrb.com">Jekyll</a> dan di<i>hosting</i> di <a href="http://github.com">GitHub</a>.
-     <p>Daftar artikel :</p>
-     
-     {{ content }}
-     
-     <h2>Kontak</h2>
-     <div class="contact">
-      <p>
-        kusaeni<br />
-        Orang bodoh sejati<br />
-        kusaeni(at)gmail.com
-      </p>
-    </div>
-    <div class="contact">
-      <p>
-        <a href="http://github.com/kuspoes/">github.com/kuspoes</a><br />
-        <a href="http://twitter.com/kusaeni/">twitter.com/kusaeni</a><br />
-        <a href="http://fanadir.in/atom.xml/">RSS Feed</a>
-      </p>
-    </div>
-     
-    </div>
-    
-  
-  
-    
+    <div id="content">    
+            {% if page.title %}
+				<h2>{{ page.title }}</h2>
+			{% endif %}
+
+			{{ content }}
+	</div>		
   
   <div class="footer">
    
     
   </div>
+
+<script type="text/javascript">
+(function($) {
+  var thePage = $("body");
+  thePage.html(thePage.html().replace(/fnd/ig, '<img src="/images/fanadir.in.png" alt="" />')); 
+})(jQuery)
+</script>
 <script type="text/javascript">
 
   var _gaq = _gaq || [];

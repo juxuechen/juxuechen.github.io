@@ -17,6 +17,7 @@ target是向发送消息的对象
 selector是要发送的消息，你可以认为它就是一个字符串。
 method signature（NSMethodSignature）封装了返回类型和参数类型的一个方法。不包括方法名称。
 现在可以吧target和参数构建一个NSInvocation。一个NSInvocation包括一切需要传递的消息。下面是如何穿件一个消息调用和调用它：
+<code>
 NSMutableSet *set = [NSMutableSet set];
   NSString *stuff = @”Stuff”;
   SEL selector = @selector(addObject:);
@@ -29,6 +30,7 @@ NSMutableSet *set = [NSMutableSet set];
   // Place the first argument at index 2.
   [invocation setArgument:&stuff atIndex:2];
   [invocation invoke];
+<code>
 注意，第一个参数放在索引2上。索引0是target（self），索引1是selector（_cmd）。NSInvocation会自动设置这些。你必须通过指针传递参数，而不是参数本身。
 调用本身是非常灵活的，但不是快。创建一个invocation比传递消息慢几百倍。调用一个invacation成本很低，然后，调用可以被重用。他们可以派发给不同的targets。你可以在使用者之间改变他们的参数。大多数的消耗在调用methodSignatureForSelector创建invocation。所以缓存这个结果可以显著提高性能。
 为之后使用存储invocation，调用retainArguments。这retain所有对象参数，copy所有C字符参数。当invocation被释放，它释放所有对象和C字符串。除了对象和C字符串，不提供任何处理。如果你正在传递原始指针来调用，你自己负责管理。

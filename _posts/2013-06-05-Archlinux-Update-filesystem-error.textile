@@ -5,6 +5,11 @@ title: Archlinux Update Filesystem Error /bin
 
 <h3>Using Target-Action</h3>
 
+在cocoa最简单的控制模式形式叫target-action。
+在oc很常见，Controls, timers, toolbars, gesture recognizers, IBAction, notifications等。
+Target-action和delegation很像，主要的区别是target-action的selector是可配置的，delegation的selector是protocol定义的。
+一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。
+
 Senin, 3 Juni 2013 <a href="http://allanmcrae.com">Allan McRae</a> membuat <a href="https://www.archlinux.org/news/binaries-move-to-usrbin-requiring-update-intervention">pemberitahuan</a> lewat situs resmi Archlinux, bahwa mulai hari itu seluruh <i>binary packages</i> yang selama ini terpencar di direktori <code>/bin</code>, <code>/sbin</code>, <code>/usr/sbin</code> akan dirapikan dan semua akan dimasukkan dalam satu direktori di <code>/usr/bin</code>.
 
 Hal ini akan berpengaruh sekali saat <i>update</i> <code>pacman</code>, biasanya setelah <i>update</i> akan mendapatkan <i>error</i> seperti berikut :

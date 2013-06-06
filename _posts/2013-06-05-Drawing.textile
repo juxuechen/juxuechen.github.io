@@ -37,7 +37,7 @@ iOS执行所有的绘制请求在run loop，在同一时刻绘制。
 
 <h3>View Drawing versus View Layout</h3>
 
-UIView从drawing (or “display”)分离视图layout (“rearranging”)。对于提高性能是重要的，因为layout通常比drawing成本低。layout成本低，因为UIView在CPU优化后过的位图缓存绘图操作。这些位图可以被移动，显示，隐藏，其它的转换和复合操作很耗CPU。
+UIView从drawing (or “display”)分离视图layout (“rearranging”)。对于提高性能是重要的，因为layout通常比drawing成本低。layout成本低，因为UIView在GPU优化后过的位图缓存绘图操作。这些位图可以被移动，显示，隐藏，其它的转换和复合操作很耗GPU。
 view调用setNeedsDisplay时，它将会被记住，在下一个绘画周期的时候重画。视图改变时调用这个方法。大多数视图在数据改变时自动重画，除非是定制的view。
 在方向或者滚动时，一个视图的subviews需要重新排布，UIKit会调用setNeedsLayout方法。反过来，在受影响的view调用layoutSubviews方法。重写layoutSubviews，在旋转和滑动事件时可以使应用更加平滑。你可以重新排布视图而非重绘它们，你可以基于方向显示或隐藏视图。如果数据变化时，只需要更新布局而不是重画，调用setNeedsLayout。
 

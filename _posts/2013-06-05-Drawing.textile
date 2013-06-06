@@ -1,0 +1,91 @@
+---
+layout: post
+title: Drawing
+---
+
+<h3>iOS绘画系统</h3>
+
+<h4>UIKit</h4>
+
+这是顶层接口,oc接口。它提供了方便的布局、合成、绘图、字体、图像、动画等功能。你可以通过UI前缀辨别UIKits元素。
+Core Graphics (also called Quartz 2D)
+UIKit底层的主要绘画系统，这是一般view使用最频繁的。Core Graphics高度集成UIView和其他UIkit部分，数据结构和函数可以通过前缀CG辨别。
+
+<h4>Core Animation</h4>
+
+提供了强大的二维和三维动画服务。它被高度集成在UIView中。
+
+<h4>Core Image</h4>
+
+一个第一次使用在iOS5上的Mac技术，提供非常高效的图像处理，比如剪切，锐化，弯曲等其它你能想象到的转换。
+
+<h4>OpenGL ES</h4>
+
+编写3D游戏最常用，Open GL ES是OpenGL三维图形API的子集。支持大多数平台。对于其它应用程序，Core Animation是更好的选择。
+
+
+<h3>UIKit and the View Drawing Cycle</h3>
+
+所有的绘画都是发生在主线程的，所以只要你的代码在主线程。这就是为什么你不能在主线程执行一段很长操作的原因。它不仅会组织绘画更新，而且会处理事件（比如触摸）。
+你不能在后台线程跑绘图命令，因为UIKit不是线程安全的。
+如何启动和停止一个长时间操作，你可以用dispatch或者opration queues来把你的大开销的工作放到后台，UIKit在主线程运行。
+总结：
+iOS执行所有的绘制请求在run loop，在同一时刻绘制。
+做复杂的处理，不要阻塞主线程。
+视图的操作都在主线程完成。
+
+
+<h3>View Drawing versus View Layout</h3>
+
+UIView从drawing (or “display”)分离视图layout (“rearranging”)。对于提高性能是重要的，因为layout通常比drawing成本低。layout成本低，因为UIView在CPU优化后过的位图缓存绘图操作。这些位图可以被移动，显示，隐藏，其它的转换和复合操作很耗CPU。
+view调用setNeedsDisplay时，它将会被记住，在下一个绘画周期的时候重画。视图改变时调用这个方法。大多数视图在数据改变时自动重画，除非是定制的view。
+在方向或者滚动时，一个视图的subviews需要重新排布，UIKit会调用setNeedsLayout方法。反过来，在受影响的view调用layoutSubviews方法。重写layoutSubviews，在旋转和滑动事件时可以使应用更加平滑。你可以重新排布视图而非重绘它们，你可以基于方向显示或隐藏视图。如果数据变化时，只需要更新布局而不是重画，调用setNeedsLayout。
+
+
+<h3>Custom View Drawing</h3>
+
+2D绘图不包括操作单个像素因为它需要以来。你可以获得位图上下文，而不是直接用UIKit或Core Graphics方法。
+UIKit和Core Graphics用一个“painter”绘画模型。这意味着按照顺序每个绘画命令，覆盖之前的绘画。顺序在模型中非常重要，你必须从后到前绘画。
+Drawing with UIKit
+在iPhone0S3.2之后，苹果增加了UIBezierPath使绘画容易与之前。UIKit仍然缺乏支持线、渐变、阴影和一些高级的功能,如控制抗锯齿和精确的色彩管理。即便如此，UIKit是现在最方便方式用来处理最常见绘图的需要。
+
+最常见的是用UIRectFrame或UIRectFill绘画举行。代码如下：
+- (void)drawRect:(CGRect)rect {
+  [[UIColor redColor] setFill];
+  UIRectFill(CGRectMake(10, 10, 100, 100));
+}
+注意，第一次绘画设置颜色。在调用drawRect之前，画布已经通过系统完成一个图形上下文。这个上下文包括一些包括颜色，字体等信息。在任何时间只有一个描边笔和一个填充笔，他们的颜色用来画所有内容。
+Paths
+UIBezierPath有简单的数据方法处理最常见的路径，线、弧、矩形(可选圆形),椭圆形。
+一个UIBezierPath只是一系列的曲线,像一个NSString是一个字符序列。只需要你填充曲线绘制的图形上下文。
+Understanding Coordinates
+绘画时，改变几何对象到像素坐标。这些是一个可以被设置特别颜色的二位盒子。一个像素是设备可以控制的最小显示单元区域。
+Resizing and contentMode
+iOS通过取得视图快照和调整frame优化图纸。drawRect方法不被调用，contentMode属性决定视图调整。
+Transforms
+iOS平台可以非常快速地做矩阵运算。Transforms只是一个矩阵运算。
+iOS有两种transforms，放射和3D。UIView处理只有放射变换，一个放射变换是表示旋转，缩放，剪切，转换的方式，
+Drawing with Core Graphics
+Core Graphics有时被叫做Quartz 2D或Quartz。是iOS主要的绘图系统。它提供destination-independent绘图，所以你可以用同样的命令来绘图到屏幕，层，位图，pdf或打印机。Core Graphics相关的都以CG开头。
+Mixing UIKit and Core Graphics
+UIKit使用ULO坐标系统，Core Graphics使用LLO坐标系统。只要你使用context返回UIGraphicsGetCurrentContext里面的drawRect一切都很正常,因为这个context已经转换。但如果你创建你自己的上下文使用CGBitmapContextCreate这样的方法,它是LLO。你可以做数据转换或者切换context。
+Managing Graphics Contexts
+
+在调用drawRect:,绘图系统创建一个图形上下文(CGContext)。一个上下文包含很多信息,比如一支笔颜色、文本颜色、当前字体、转换和其它。有时你可能想要修改上下文,然后把它放回原位。例如,您可能有一个函数来绘制特定颜色的特定形状。只有一只绘笔,所以当你改变颜色将改变对你的调用。为避免副作用,你可以push和pop上下文使用CGContextSaveGState和CGContextRestoreGState。
+
+
+<h3>Optimizing UIView Drawing</h3>
+1，避免重绘
+适当使用contentMode使系统自动适应view。
+避免调用setNeedsDisplay，它会调用drawRect。
+2，缓存和后台绘图
+如果绘图时需要大量计算，缓存计算结果。通常最好的缓存位置是在CGLayer。
+许多缓存和提前的运算可以在后台完成。
+3，自定义绘图预生成
+4，像素对齐和模糊文本
+5，Alpha，Opaque，Hidden
+alpha：有多少信息是显示在像素中的在frame范围内。
+opaque：有多少透明。
+hidden：是否被画，和alpha0一样。
+CGLayer
+CGLayer绘图时用来缓存的一个有效方式。这个不应该CALayer混为一谈,在Core Animation这是一个更强大的和复杂的层对象。CGLayer是一个核心图形层优化,硬件优化,对于绘图经常到CGContext。

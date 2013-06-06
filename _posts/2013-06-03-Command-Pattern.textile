@@ -5,18 +5,24 @@ title: Command Patte
 
 <h3>Using Target-Action</h3>
 
+<p>
 在cocoa最简单的控制模式形式叫target-action。
 在oc很常见，Controls, timers, toolbars, gesture recognizers, IBAction, notifications等。
 Target-action和delegation很像，主要的区别是target-action的selector是可配置的，delegation的selector是protocol定义的。
-一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。
+一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。、
+</p>
+
 
 <h3>Using Method Signatures and Invocations</h3>
 
+<p>
 NSInvocation是一个传统的实现控制模式。它包括一个目标，一个选择器，一个方法签名，一个存储和调用所有参数的对象。当invocation被调用，它将发送消息，oc运行时会找到对应的方法去执行。
 target是向发送消息的对象
 selector是要发送的消息，你可以认为它就是一个字符串。
 method signature（NSMethodSignature）封装了返回类型和参数类型的一个方法。不包括方法名称。
 现在可以吧target和参数构建一个NSInvocation。一个NSInvocation包括一切需要传递的消息。下面是如何穿件一个消息调用和调用它：
+</p>
+
 <code>
 NSMutableSet *set = [NSMutableSet set];
   NSString *stuff = @”Stuff”;
@@ -31,16 +37,24 @@ NSMutableSet *set = [NSMutableSet set];
   [invocation setArgument:&stuff atIndex:2];
   [invocation invoke];
 <code>
+
+<p>
 注意，第一个参数放在索引2上。索引0是target（self），索引1是selector（_cmd）。NSInvocation会自动设置这些。你必须通过指针传递参数，而不是参数本身。
 调用本身是非常灵活的，但不是快。创建一个invocation比传递消息慢几百倍。调用一个invacation成本很低，然后，调用可以被重用。他们可以派发给不同的targets。你可以在使用者之间改变他们的参数。大多数的消耗在调用methodSignatureForSelector创建invocation。所以缓存这个结果可以显著提高性能。
 为之后使用存储invocation，调用retainArguments。这retain所有对象参数，copy所有C字符参数。当invocation被释放，它释放所有对象和C字符串。除了对象和C字符串，不提供任何处理。如果你正在传递原始指针来调用，你自己负责管理。
 Invacations是oc消息调度系统重要的一部分。集成消息调度使创建和撤销管理中心化。
+</p>
+
 
 <h3>Using Trampolines</h3>
 
+<p>
 Trampoline“bounces”一个消息从一个对象到另一个。这允许一个代理对象，移动消息到另一个线程，缓存结果，合并重复信息或者其它中介处理。一般使用处理forwardInvocation任何消息。如果一个对象不能响应selectore，再抛出错误之前它创建NSInvocation传递它到forwardInvocation的对象。
+</p>
 
 <h3>Using Undo</h3>
 
+<p>
 控制模式的中心是撤销管理。通过存储NSInvocation对象到堆栈，你可以提供任意撤销和重做功能。
 当调用prepareWithInvocationTarget时，撤销操作返回你可以发送任何消息的trampoline。这些都是转化为NSInvocation对象存储在栈的。当需要撤销一个操作，撤销管理只需要调用栈上最后一个命令。
+</p>

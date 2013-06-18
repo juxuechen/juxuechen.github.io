@@ -51,7 +51,9 @@ Invacations是oc消息调度系统重要的一部分。这种集成消息的调�
 #import <objc/runtime.h>
 @interface RNObserverManager : NSObject
 /**
- 初始化该蹦床需要使用一个协议和一组原始观察者。然后，你可以添加或者删除观察者。如果观察者实现了协议，协议中定义的任何方法都将被转发至当前所有观察者。
+ 初始化该蹦床需要使用一个协议和一组原始观察者。
+ 然后，你可以添加或者删除观察者。
+ 如果观察者实现了协议，协议中定义的任何方法都将被转发至当前所有观察者。
  **/
 - (id)initWithProtocol:(Protocol *)protocol
              observers:(NSSet *)observers;
@@ -85,7 +87,8 @@ Invacations是oc消息调度系统重要的一部分。这种集成消息的调�
 }
 
 /**
- 你可以覆盖methodSignatureForSelector:方法。Objective-C的消息分发器使用该方法为未知的选择器构建一个NSInvocation。
+ 你可以覆盖methodSignatureForSelector:方法。
+ Objective-C的消息分发器使用该方法为未知的选择器构建一个NSInvocation。
  使用protocol_getMethodDescription覆盖它以便返回协议中所定义方法的签名。
  你需要从协议中获得方法签名，而不是从观察者中获得，因为该方法可以是可选的，观察者可能不实现它。
 **/

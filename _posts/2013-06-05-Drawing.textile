@@ -5,19 +5,19 @@ title: Drawing
 
 <h3>iOS绘画系统</h3>
 
-<h4>UIKit</h4>
+	UIKit
 这是顶层接口,oc接口。它提供了方便的布局、合成、绘图、字体、图像、动画等功能。UIKits的类使用UI前缀。
 
-<h4>Core Graphics (also called Quartz 2D)</h4>
+	Core Graphics (also called Quartz 2D)
 UIKit底层的主要绘画系统，这是一般view使用最频繁的。Core Graphics高度集成在UIView和UIkit其它类内部，数据结构和函数使用CG前缀。
 
-<h4>Core Animation</h4>
+	Core Animation
 提供了强大的二维和三维动画方法。高度集成在UIView中。
 
-<h4>Core Image</h4>
+	Core Image
 一个第一次使用在iOS5上的Mac技术，提供非常高效的图像处理，比如剪切，锐化，弯曲等其它你能想象到的转换。
 
-<h4>OpenGL ES</h4>
+	OpenGL ES
 编写3D游戏最常用，Open GL ES是OpenGL三维图形API的子集。支持大多数平台。对于大部分应用程序，Core Animation是更好的选择。
 
 
@@ -44,12 +44,11 @@ Drawing with UIKit
 在iPhone0S3.2之后，苹果增加了UIBezierPath使绘画容易与之前。UIKit仍然缺乏支持线、渐变、阴影和一些高级的功能,如控制抗锯齿和精确的色彩管理。即便如此，UIKit是现在最方便方式用来处理最常见绘图的需要。
 
 最常见的是用UIRectFrame或UIRectFill绘画举行。代码如下：
-<code>
 - (void)drawRect:(CGRect)rect {
   [[UIColor redColor] setFill];
   UIRectFill(CGRectMake(10, 10, 100, 100));
 }
-<code>
+
 注意，第一次绘画设置颜色。在调用drawRect之前，画布已经通过系统完成一个图形上下文。这个上下文包括一些包括颜色，字体等信息。在任何时间只有一个描边笔和一个填充笔，他们的颜色用来画所有内容。
 Paths
 UIBezierPath有简单的数据方法处理最常见的路径，线、弧、矩形(可选圆形),椭圆形。

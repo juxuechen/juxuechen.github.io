@@ -4,25 +4,25 @@ title: Command Patte
 ---
 
 <h3>Using Target-Action</h3>
-<p>
+
 在cocoa最简单的模式形式叫target-action。当事件发生时，一个持有事件信息的对象把消息发送给另一个对象。它由两部分数据构成：表示被调用方法的selector，接收消息的target。target可以是任何对象甚至框架对象，在程序中通常用来自定义处理消息。
 在oc很普遍使用这种形式，比如Controls, timers, toolbars, gesture recognizers, IBAction, notifications等。
 Target-action和delegation很像，主要的区别是target-action的selector是可配置的，delegation的selector是protocol定义的。
 一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。
-</p>
+
 
 
 <h3>Using Method Signatures and Invocations</h3>
-<p>
+
 NSInvocation是一个传统的实现控制模式。可以直接调用某个对象的消息。对于大于2个参数和有返回值的处理，很适合这种模式。
 它包括一个目标，一个选择器，一个方法签名，一个存储和调用所有参数的对象。当invocation被调用，它将发送消息，oc运行时会找到对应的方法去执行。
 target是发消息目标的对象
 selector是要发送的消息，只是一个名称。
 method signature（NSMethodSignature）封装了返回类型和参数类型的一个方法。不包括方法名称，只有返回值和参数。
 现在可以把target和参数构建一个NSInvocation。一个NSInvocation包括一切需要传递的消息。下面是如何创建一个消息调用和调用它：
-</p>
-<code>
-NSMutableSet *set = [NSMutableSet set];
+
+{% highlight lua lineos %}
+  NSMutableSet *set = [NSMutableSet set];
   NSString *stuff = @”Stuff”;
   SEL selector = @selector(addObject:);
   NSMethodSignature *sig = [set methodSignatureForSelector:selector];
@@ -31,25 +31,23 @@ NSMutableSet *set = [NSMutableSet set];
   [invocation setSelector:selector];
   [invocation setArgument:&stuff atIndex:2];
   [invocation invoke];
-</code>
-<p>
+{% endhighlight %}
+
 第一个参数放置在index2上。因为index0是target (self)，index1是selector (_cmd)，这些会自动设置。传递地址给参数，而不是它自己。
 Invocation非常灵活，但它速度并不快。创建invocation比传递消息慢几百倍。调用invocation成本很低，还可以被重用。通过invokeWithTarget:或setTarget:方法它可以被分派到不同的目标。可以在使用之间改变参数。大多数的消耗实在创建invocation时methodSignatureForSelector:方法中，所以缓存这个结果可以显著提高性能。
 Invocations不会retain对象参数对象，他们也不赋值C字符串参数。为了保存以后使用，调用retainArguments。这会retain所有的对象参数并复制C字符串参数。当invacation被释放，将释放对象和C字符串。
 Invacations是oc消息调度系统重要的一部分。这种集成消息的调度系统使创建和撤销管理集中化。
-</p>
 
 
 
 <h3>Using Trampolines</h3>
 
-<p>
 蹦床把一条消息从一个对象“反弹”到另一个对象。这种技术允许一个代理对象把消息转移到另一个线程、缓存结果、合并重复的消息或者任何其他中间配置。
 蹦床一般使用forwardInvocation:方法处理消息。如果一个对象在Objective-C提示错误之前不响应一个选择器，它就会创建一个NSIvocation并且传递给该对象的forwardInvocation:方法。你可以用它以任何方式转发消息。
 
 例如，创建一个叫RNObserverManager的蹦床。任何发送到trampoline的信息都将被转发到响应选择器的已注册观察者。它提供了类似于NSNotification的功能，但如果有很多观察者的话，它会更易用并且速度更快。
-</p>
-<code>
+
+{% highlight lua lineos %}
 #import <objc/runtime.h>
 @interface RNObserverManager : NSObject
 /**
@@ -133,12 +131,11 @@ Invacations是oc消息调度系统重要的一部分。这种集成消息的调�
     }
 }
 @end
-</code>
+{% endhighlight %}
 
-<p>
 要使用此蹦床，你需要创建一个实例，设置观察者，然后如下列代码所示给实例发送消息。拥有蹦床的变量一般是id类型，这样你就可以给它发送任意消息而不会触发编译器警告。
-</p>
-<code>
+
+{% highlight lua lineos %}
 @protocol MyProtocol <NSObject>
     - (void)doSomething;
     @end
@@ -149,12 +146,11 @@ Invacations是oc消息调度系统重要的一部分。这种集成消息的调�
                            initWithProtocol:@protocol(MyProtocol)
                                   observers:observers];
     [observerManager doSomething];
-</code>
+{% endhighlight %}
 
-<p>
 给此蹦床传递一条消息类似于发布一个通知。你可以用这种技术解决各种各样的问题。例如，你可以创建一个把所有消息转发给主线程的代理蹦床，如下所示:
-</p>
-<code>
+
+{% highlight lua lineos %}
 RNMainThreadTrampoline.h (ObserverTrampoline)
 
 @interface RNMainThreadTrampoline : NSObject
@@ -187,18 +183,16 @@ forwardInvocation:方法可以自如地合并重复消息、添加记录、将�
                             waitUntilDone:NO];
 }
 @end
-</code>
-
+{% endhighlight %}
 
 
 
 <h3>Using Undo</h3>
 
-<p>
 控制模式的中心是撤销管理。通过存储NSInvocation对象到堆栈，你可以提供任意撤销和重做功能。
 在执行操作之前，用户应该能够撤销，传递反响动作到NSUndoManager。方便的方法是调用prepareWithInvocationTarget:操作。
-</p>
-<code>
+
+{% highlight lua lineos %}
 - (void)setString:(NSString *)aString {
     //确保有变化
     if (! [aString isEqualToString:string_]) {
@@ -210,10 +204,9 @@ forwardInvocation:方法可以自如地合并重复消息、添加记录、将�
         [self.undoManager undo];
     }
 }
-</code>
-<p>
+{% endhighlight %}
+
 当调用prepareWithInvocationTarget时，撤销管理返回可发任意消息的蹦床。这些都是转化为NSInvocation对象存储在栈的。当需要撤销一个操作，撤销管理只需要调用栈上最后一个命令。
-</p>
 
 命令模式贯穿于Cocoa，为你架构提供实用的工具。它有助于从请求中分隔请求调度，提高代码可用性和灵活性。
 

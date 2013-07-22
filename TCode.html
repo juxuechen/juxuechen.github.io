@@ -8,11 +8,11 @@
  
 <body>
 <form>
-    模板名(生成数组时变量名称)<input type="text" id="name" value="actImage"/><br />
-    标题(在模板上方显示)<input type="text" id="title" value="活动入口"/><br />
-    组别(tag分隔用)<input type="text" id="group" value="cp"/><br />
-    中文占位名称(逗号间隔)<input type="text" style="width:500px;" id="cnames" value="图片,链接" charset="utf-8"/><br />
-    英文占位名称(逗号间隔)<input type="text" style="width:500px;" id="enames" value="img,URL"/><br />
+    name(数据存储名称)<input type="text" id="name" value="productlist_group"/><br />
+    title(维护者看到的数据描述)<input type="text" id="title" value="组"/><br />
+    group(数据维护分组)<input type="text" id="group" value="组"/><br />
+    中文占位名称(逗号间隔)<input type="text" style="width:500px;" id="cnames" value="组id,图片链接" charset="utf-8"/><br />
+    英文占位名称(逗号间隔)<input type="text" style="width:500px;" id="enames" value="groupId,image"/><br />
     <button type="button" onclick="clicccc()">生成代码!</button><br />
 </form>
 </body>
@@ -38,38 +38,16 @@ var enameArray = enames.split(",");
 var fileds = "";
 for (var i=0;i<cnameArray.length;i++)
 {
-	fileds += enameArray[i]+':'+cnameArray[i]+':string,';
+	if(i+1 == cnameArray.length){
+		fileds += enameArray[i]+':'+cnameArray[i]+':string';
+	}
+	else{	
+		fileds += enameArray[i]+':'+cnameArray[i]+':string,';
+	}
 }
 
 
-var ctr = "";
-for (var i=0;i<cnameArray.length;i++)
-{
-	ctr += '<td>'+cnameArray[i]+'</td>';
-}
-
-
-var etr = "";
-for (var i=0;i<enameArray.length;i++)
-{
-	etr += '<td>$!section.'+enameArray[i]+'</td>';
-}
-
-
-var data = "";
-for (var i=0;i<enameArray.length;i++)
-{
-	data += '\t"'+enameArray[i]+'" => "$!section.'+enameArray[i]+'",\n';
-}
-
-	document.getElementById('code').value = '<cms:custom name="'+name+'" title="'+title+'" fields="'+fileds+'" group="'+group+'" row="100" defaultRow="1">\n'+
-	'<\?php if($__REQUEST[\'envMode\'] === \'edit\'): \?>\n'+
-	'\t<table id=\'list\'>\n'+
-	'\t\t<tr>'+ctr+'</tr>\n'+
-	'\t\t#foreach ($section in $customList)\n'+
-	'\t\t\t<tr>'+etr+'</tr>\n'+
-	'\t\t#end\n\t</table>\n<\? else:\n\?>\n#foreach ($section in $customList)\n<\?\n'+
-	'$'+name+'[] = array(\n'+data+');\n\?>\n#end\n<\?\nendif \n\?>\n</cms:custom>';
+	document.getElementById('code').value = '\'{"name":"'+name+'","title":"'+title+'","group":"'+group+'","row":"100","defaultRow":"1","fields":"'+fileds+'"}\'';
 	
 }
 

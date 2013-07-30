@@ -1,0 +1,156 @@
+---
+layout: post
+title: 使用注意事项
+---
+
+Block是iOS4.0+ 和Mac OS X 10.6+ 引进的对C语言的扩展，用来实现匿名函数的特性。
+用维基百科的话来说，Block是Apple Inc.为C、C++以及Objective-C添加的特性，使得这些语言可以用类lambda表达式的语法来创建闭包。
+用Apple文档的话来说，A block is an anonymous inline collection of code, and sometimes also called a "closure".
+
+<h4>匿名函数</h4>
+就如名字暗示的一样，匿名函数实际上就是一个没有名字或者标示(identifier)的函数。匿名函数只有内容(也可以叫做body)，我们可以将其存储在一个变量中，以便之后使用，或者将其当做一个参数传递给另外一个函数使用。
+<h4>闭包性</h4>
+闭包性这个概念是允许一个函数访问其所声明上下文中的变量，甚至是在不同的运行上下文中。
+
+<h3>Block在内存中的位置</h3>
+根据Block在内存中的位置分为三种类型NSGlobalBlock，NSStackBlock, NSMallocBlock。
+NSGlobalBlock：类似函数，位于代码段；
+NSStackBlock：位于栈内存，函数返回后block立即释放；
+NSMallocBlock：位于堆内存。
+
+marc时
+BlkSum blk1 = ^long(int a, int b) {
+        return a + b;
+    };
+    NSLog(@"blk1 = %@", blk1);// blk1 = <__NSGlobalBlock__: 0xa1f150>
+
+
+    int base = 100;
+    BlkSum blk2 = ^ long (int a, int b) {
+        return base + a + b;
+    };
+    NSLog(@"blk2 = %@", blk2); // blk2 = <__NSStackBlock__: 0xb090bdb8>
+
+    BlkSum blk3 = [[blk2 copy] autorelease];
+    NSLog(@"blk3 = %@", blk3); // blk3 = <__NSMallocBlock__: 0x134924d0>
+ 但是在arc下，blk2也在heap上。blk2也是__NSMallocBlock__。
+ 因为ARC过程在定义block时就copy了一份。  
+ NSGlobalBlock是全局的block，生命周期是全局的。没有访问内存中其它的对象，内部的所有内存都是运行时申请的。它没有依赖，即使函数结束，生命周期结束了，它的运行也不受影响。
+ NSStackBlock存放在stack段，生命周期是局部的。访问了base，也就访问了外部的内存，有依赖。block对外部的原子变量做一份const的拷贝，如果内部需要修改要加__block修饰。block对所有引用的对象都做了一次retain，如果外部对象不想被retain，那么需要改变声明方式__block。
+ 
+  
+<h3>Block的copy、retain、release操作</h3>
+
+不同于NSObjec的copy、retain、release操作：
+
+   * Block_copy与copy等效，Block_release与release等效；
+   * NSGlobalBlock：retain、copy、release操作都无效；
+   * NSStackBlock：retain、release操作无效，必须注意的是，NSStackBlock在函数返回后，Block内存将被回收。即使retain也没用。容易犯的错误是[[mutableAarry addObject:stackBlock]，在函数出栈后，从mutableAarry中取到的stackBlock已经被回收，变成了野指针。正确的做法是先将stackBlock copy到堆上，然后加入数组：[mutableAarry addObject:[[stackBlock copy] autorelease]]。支持copy，copy之后生成新的NSMallocBlock类型对象。
+   * NSMallocBlock支持retain、release，虽然retainCount始终是1。copy之后不会生成新的对象，只是增加了一次引用，类似retain。如果retain了记得一定要release。
+
+<h3>Block对不同类型的变量的存取</h3>
+<h4>基本类型</h4>
+   * 局部自动变量，在Block中只读。Block定义时copy变量的值，在Block中作为常量使用，所以即使变量的值在Block外改变，也不影响他在Block中的值。
+   * static变量、全局变量。如果把上个例子的base改成全局的、或static。Block就可以对他进行读写了。因为全局变量或静态变量在内存中的地址是固定的，Block在读取该变量值的时候是直接从其所在内存读出，获取到的是最新值，而不是在定义时copy的常量。
+   * Block变量，被__block修饰的变量称作Block变量。 基本类型的Block变量等效于全局变量、或静态变量。
+   * 对于block外的变量引用，block默认是将其复制到其数据结构中来实现访问的。
+   * 用__block修饰的外部变量引用，block是复制其引用地址来实现访问的。
+Block被另一个Block使用时，另一个Block被copy到堆上时，被使用的Block也会被copy。但作为参数的Block是不会发生copy的。
+void foo() {
+    int base = 100;
+    BlkSum blk = ^ long (int a, int b) {
+        return  base + a + b;
+    };
+    NSLog(@"%@", blk); // <__NSStackBlock__: 0xbfffd9b0>
+    bar(blk);
+}
+
+void bar(BlkSum sum_blk) {
+    NSLog(@"%@",sum_blk); // 与上面一样，说明作为参数传递时，并不会发生copy
+
+    void (^blk) (BlkSum) = ^ (BlkSum sum) {
+        NSLog(@"%@",sum);     // 无论blk在堆上还是栈上，作为参数的Block不会发生copy。
+        NSLog(@"%@",sum_blk); // 当blk copy到堆上时，sum_blk也被copy了一分到堆上上。
+    };
+    blk(sum_blk); // blk在栈上
+
+    blk = [[blk copy] autorelease];
+    blk(sum_blk); // blk在堆上
+} 
+2013-07-29 21:30:29.898 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
+2013-07-29 21:30:46.851 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
+2013-07-29 21:31:10.487 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
+2013-07-29 21:31:10.487 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
+2013-07-29 21:31:34.703 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
+2013-07-29 21:31:34.703 Test[36477:c07] <__NSMallocBlock__: 0x892bd30>
+blk在copy之后，使用的sum_block也别copy到heap上，但参数sum没有变。
+
+ObjC对象，不同于基本类型，Block会引起对象的引用计数变化。
+NSObject* _globalObj = nil;
+@interface FirstViewController : UIViewController{
+    NSObject *_instanceObj;
+}
+- (id) init { 
+if (self = [super init]) {
+ _instanceObj = [[NSObject alloc] init]; } return self; }
+- (void)test{
+    _instanceObj = [[NSObjectalloc] init];
+    staticNSObject* _staticObj = nil;
+    _globalObj = [[NSObjectalloc] init];
+    _staticObj = [[NSObjectalloc] init];
+
+    NSObject* localObj = [[NSObjectalloc] init];
+    __blockNSObject* blockObj = [[NSObjectalloc] init];
+
+    typedefvoid (^MyBlock)(void) ;
+    MyBlock aBlock = ^{
+        NSLog(@"%d", [_globalObjretainCount]);//全局变量
+    NSLog(@"%d", [_staticObj retainCount]);//静态变量
+    //内存中的位置是确定的，所以Block copy时不会retain对象
+    NSLog(@"%d", [_instanceObjretainCount]);
+    //Block copy时也没有直接retain _instanceObj对象本身，但会retain self。所以在Block中可以直接读写_instanceObj变量。
+    NSLog(@"%d", [localObj retainCount]);
+    //Block copy时，系统自动retain对象，增加其引用计数。
+    NSLog(@"%d", [blockObj retainCount]);
+    //Block copy时也不会retain。
+    };
+    aBlock = [[aBlock copy] autorelease];
+    aBlock();
+
+    NSLog(@"%d", [_globalObjretainCount]);
+    NSLog(@"%d", [_staticObj retainCount]);
+    NSLog(@"%d", [_instanceObjretainCount]);
+    NSLog(@"%d", [localObj retainCount]);
+    NSLog(@"%d", [blockObj retainCount]);
+}
+结果输出1 1 1 2 1
+
+<h4>retain cycle</h4>
+MRC中__block是不会引起retain；但在ARC中__block则会引起retain。ARC中应该使用__weak或__unsafe_unretained弱引用。__weak只能在iOS5以后使用。
+
+<h4>Block使用对象被提前释放</h4>
+request1和request2持有block，request1被释放，但block还被request2持有，request2再去调block，导致crash。为了避免这种情况，开发者必须要注意对象和Block的生命周期。
+
+另一个常见错误使用是，开发者担心retain cycle错误的使用__block。比如
+@interface MyClass : NSObject
+
+@end
+
+@implementation MyClass;
+
+- (void)test {
+    __block MyClass *weakSelf = self;
+    double delayInSeconds = 3.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        NSLog(@"%@", weakSelf);
+    });
+}
+
+- (void)fuction{
+  	 MyClass *class = [[[MyClass alloc] init] autorelease];
+    [class test];
+}
+将block作为参数传给dispatch_async时，系统会将Block拷贝到堆上。如果Block中使用了实例变量，还将retain self，因为dispatch_async并不知道self会在什么时候被释放，为了确保系统调度执行Block中的任务时self没有被意外释放掉，dispatch_async必须自己retain一次self，任务完成后再release self。
+但这里使用__block，使dispatch_async没有增加self的引用计数，这使得在系统在调度执行Block之前，self可能已被销毁，但系统并不知道这个情况，导致Block被调度执行时self已经被释放导致crash。
+解决办法是不要使用__block,block执行后会自动释放copy的变量。

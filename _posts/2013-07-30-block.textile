@@ -19,6 +19,7 @@ NSStackBlock：位于栈内存，函数返回后block立即释放；
 NSMallocBlock：位于堆内存。
 
 marc时
+{% highlight lua lineos %}
 BlkSum blk1 = ^long(int a, int b) {
         return a + b;
     };
@@ -33,6 +34,7 @@ BlkSum blk1 = ^long(int a, int b) {
 
     BlkSum blk3 = [[blk2 copy] autorelease];
     NSLog(@"blk3 = %@", blk3); // blk3 = <__NSMallocBlock__: 0x134924d0>
+{% endhighlight %}
  但是在arc下，blk2也在heap上。blk2也是__NSMallocBlock__。
  因为ARC过程在定义block时就copy了一份。  
  NSGlobalBlock是全局的block，生命周期是全局的。没有访问内存中其它的对象，内部的所有内存都是运行时申请的。它没有依赖，即使函数结束，生命周期结束了，它的运行也不受影响。
@@ -56,6 +58,7 @@ BlkSum blk1 = ^long(int a, int b) {
    * 对于block外的变量引用，block默认是将其复制到其数据结构中来实现访问的。
    * 用__block修饰的外部变量引用，block是复制其引用地址来实现访问的。
 Block被另一个Block使用时，另一个Block被copy到堆上时，被使用的Block也会被copy。但作为参数的Block是不会发生copy的。
+{% highlight lua  lineos %}
 void foo() {
     int base = 100;
     BlkSum blk = ^ long (int a, int b) {
@@ -83,9 +86,11 @@ void bar(BlkSum sum_blk) {
 2013-07-29 21:31:10.487 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
 2013-07-29 21:31:34.703 Test[36477:c07] <__NSStackBlock__: 0xbfffd9b0>
 2013-07-29 21:31:34.703 Test[36477:c07] <__NSMallocBlock__: 0x892bd30>
+{% endhighlight %}
 blk在copy之后，使用的sum_block也别copy到heap上，但参数sum没有变。
 
 ObjC对象，不同于基本类型，Block会引起对象的引用计数变化。
+{% highlight lua  lineos %}
 NSObject* _globalObj = nil;
 @interface FirstViewController : UIViewController{
     NSObject *_instanceObj;
@@ -123,6 +128,7 @@ if (self = [super init]) {
     NSLog(@"%d", [localObj retainCount]);
     NSLog(@"%d", [blockObj retainCount]);
 }
+{% endhighlight %}
 结果输出1 1 1 2 1
 
 <h4>retain cycle</h4>
@@ -132,6 +138,7 @@ MRC中__block是不会引起retain；但在ARC中__block则会引起retain。ARC
 request1和request2持有block，request1被释放，但block还被request2持有，request2再去调block，导致crash。为了避免这种情况，开发者必须要注意对象和Block的生命周期。
 
 另一个常见错误使用是，开发者担心retain cycle错误的使用__block。比如
+{% highlight lua  lineos %}
 @interface MyClass : NSObject
 
 @end
@@ -151,6 +158,7 @@ request1和request2持有block，request1被释放，但block还被request2持�
   	 MyClass *class = [[[MyClass alloc] init] autorelease];
     [class test];
 }
+{% endhighlight %}
 将block作为参数传给dispatch_async时，系统会将Block拷贝到堆上。如果Block中使用了实例变量，还将retain self，因为dispatch_async并不知道self会在什么时候被释放，为了确保系统调度执行Block中的任务时self没有被意外释放掉，dispatch_async必须自己retain一次self，任务完成后再release self。
 但这里使用__block，使dispatch_async没有增加self的引用计数，这使得在系统在调度执行Block之前，self可能已被销毁，但系统并不知道这个情况，导致Block被调度执行时self已经被释放导致crash。
 解决办法是不要使用__block,block执行后会自动释放copy的变量。

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+
+<head>
+<title>模板代码工具</title>
+</head>
+ 
+<body>
+<form>
+    name(数据存储名称)<input type="text" id="name" value="productlist_group"/><br />
+    title(维护者看到的数据描述)<input type="text" id="title" value="组"/><br />
+    group(数据维护分组)<input type="text" id="group" value="组"/><br />
+    中文占位名称(逗号间隔)<input type="text" style="width:500px;" id="cnames" value="组id,图片链接" charset="utf-8"/><br />
+    英文占位名称(逗号间隔)<input type="text" style="width:500px;" id="enames" value="groupId,image"/><br />
+    <button type="button" onclick="clicccc()">生成代码!</button><br />
+</form>
+</body>
+
+
+<textarea type="text" id="code"  style="height:400px; width:1000px;" />
+</textarea>
+
+
+<script type="text/javascript" charset="utf-8">
+
+function clicccc() {
+
+var name = document.getElementById('name').value;
+var title = document.getElementById('title').value;
+var group = document.getElementById('group').value;
+var cnames = document.getElementById('cnames').value;
+var cnameArray = cnames.split(",");
+var enames = document.getElementById('enames').value;
+var enameArray = enames.split(",");
+	
+
+var fileds = "";
+for (var i=0;i<cnameArray.length;i++)
+{
+	if(i+1 == cnameArray.length){
+		fileds += enameArray[i]+':'+cnameArray[i]+':string';
+	}
+	else{	
+		fileds += enameArray[i]+':'+cnameArray[i]+':string,';
+	}
+}
+
+
+	document.getElementById('code').value = '\'{"name":"'+name+'","title":"'+title+'","group":"'+group+'","row":"100","defaultRow":"1","fields":"'+fileds+'"}\'';
+	
+}
+
+
+</script>
+
+
+</html>
+
+

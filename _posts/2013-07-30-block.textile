@@ -19,7 +19,7 @@ NSStackBlock：位于栈内存，函数返回后block立即释放；
 NSMallocBlock：位于堆内存。
 
 marc时
-{% highlight lua lineos %}
+{% highlight c %}
 BlkSum blk1 = ^long(int a, int b) {
         return a + b;
     };
@@ -58,7 +58,7 @@ BlkSum blk1 = ^long(int a, int b) {
    * 对于block外的变量引用，block默认是将其复制到其数据结构中来实现访问的。
    * 用__block修饰的外部变量引用，block是复制其引用地址来实现访问的。
 Block被另一个Block使用时，另一个Block被copy到堆上时，被使用的Block也会被copy。但作为参数的Block是不会发生copy的。
-{% highlight lua  lineos %}
+{% highlight c %}
 void foo() {
     int base = 100;
     BlkSum blk = ^ long (int a, int b) {
@@ -90,7 +90,7 @@ void bar(BlkSum sum_blk) {
 blk在copy之后，使用的sum_block也别copy到heap上，但参数sum没有变。
 
 ObjC对象，不同于基本类型，Block会引起对象的引用计数变化。
-{% highlight lua  lineos %}
+{% highlight c %}
 NSObject* _globalObj = nil;
 @interface FirstViewController : UIViewController{
     NSObject *_instanceObj;
@@ -138,7 +138,7 @@ MRC中__block是不会引起retain；但在ARC中__block则会引起retain。ARC
 request1和request2持有block，request1被释放，但block还被request2持有，request2再去调block，导致crash。为了避免这种情况，开发者必须要注意对象和Block的生命周期。
 
 另一个常见错误使用是，开发者担心retain cycle错误的使用__block。比如
-{% highlight lua  lineos %}
+{% highlight c %}
 @interface MyClass : NSObject
 
 @end

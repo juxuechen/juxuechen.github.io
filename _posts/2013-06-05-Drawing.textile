@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Drawing
+category: learning
 ---
 
 <h3>iOS绘画系统</h3>

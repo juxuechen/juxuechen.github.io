@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 常用命令
+category: learning
 ---
 
 <h3>常用命令</h3>

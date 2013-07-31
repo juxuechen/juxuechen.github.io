@@ -1,6 +1,7 @@
 ---
 layout: post
 title: 使用注意事项
+category: learning
 ---
 
  tableview是通过delegate和datasource来渲染界面的，所以在渲染的时候，就是代理方法被调用的时候，要保证数据一直性。针对数据的一致性，说几个易犯的错误。

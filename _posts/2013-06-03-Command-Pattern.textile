@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Command Patte
+category: learning
 ---
 
 <h3>Using Target-Action</h3>

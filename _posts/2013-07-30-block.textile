@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Block
+category: learning
 ---
 
 Block是iOS4.0+ 和Mac OS X 10.6+ 引进的对C语言的扩展，用来实现匿名函数的特性。

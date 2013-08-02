@@ -5,20 +5,20 @@ category: learning
 ---
 
 ## Using Target-Action
-  在cocoa最简单的模式形式叫target-action。当事件发生时，一个持有事件信息的对象把消息发送给另一个对象。它由两部分数据构成：表示被调用方法的selector，接收消息的target。target可以是任何对象甚至框架对象，在程序中通常用来自定义处理消息。
-在oc很普遍使用这种形式，比如Controls, timers, toolbars, gesture recognizers, IBAction, notifications等。
-Target-action和delegation很像，主要的区别是target-action的selector是可配置的，delegation的selector是protocol定义的。
-一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。
+在cocoa最简单的模式形式叫target-action。当事件发生时，一个持有事件信息的对象把消息发送给另一个对象。它由两部分数据构成：表示被调用方法的selector，接收消息的target。target可以是任何对象甚至框架对象，在程序中通常用来自定义处理消息。
+<br/>  在oc很普遍使用这种形式，比如Controls, timers, toolbars, gesture recognizers, IBAction, notifications等
+<br/> Target-action和delegation很像，主要的区别是target-action的selector是可配置的，delegation的selector是protocol定义的。
+<br/>    一般规定，如果对象只会发送一个消息到目标对象，使用target-action。如果它发送多个消息，用delegation。
 
 
 ## Using Method Signatures and Invocations
 
 NSInvocation是一个传统的实现控制模式。可以直接调用某个对象的消息。对于大于2个参数和有返回值的处理，很适合这种模式。
-它包括一个目标，一个选择器，一个方法签名，一个存储和调用所有参数的对象。当invocation被调用，它将发送消息，oc运行时会找到对应的方法去执行。
-target是发消息目标的对象
-selector是要发送的消息，只是一个名称。
-method signature（NSMethodSignature）封装了返回类型和参数类型的一个方法。不包括方法名称，只有返回值和参数。
-现在可以把target和参数构建一个NSInvocation。一个NSInvocation包括一切需要传递的消息。下面是如何创建一个消息调用和调用它：
+<br/>它包括一个目标，一个选择器，一个方法签名，一个存储和调用所有参数的对象。当invocation被调用，它将发送消息，oc运行时会找到对应的方法去执行。
+<br/>target是发消息目标的对象
+<br/>selector是要发送的消息，只是一个名称。
+<br/>method signature（NSMethodSignature）封装了返回类型和参数类型的一个方法。不包括方法名称，只有返回值和参数。
+<br/>现在可以把target和参数构建一个NSInvocation。一个NSInvocation包括一切需要传递的消息。下面是如何创建一个消息调用和调用它：
 <pre><code>
   NSMutableSet *set = [NSMutableSet set];
   NSString *stuff = @”Stuff”;
@@ -31,18 +31,16 @@ method signature（NSMethodSignature）封装了返回类型和参数类型的�
   [invocation invoke];
 </code></pre>
 第一个参数放置在index2上。因为index0是target (self)，index1是selector (_cmd)，这些会自动设置。传递地址给参数，而不是它自己。
-Invocation非常灵活，但它速度并不快。创建invocation比传递消息慢几百倍。调用invocation成本很低，还可以被重用。通过invokeWithTarget:或setTarget:方法它可以被分派到不同的目标。可以在使用之间改变参数。大多数的消耗实在创建invocation时methodSignatureForSelector:方法中，所以缓存这个结果可以显著提高性能。
-Invocations不会retain对象参数对象，他们也不赋值C字符串参数。为了保存以后使用，调用retainArguments。这会retain所有的对象参数并复制C字符串参数。当invacation被释放，将释放对象和C字符串。
-Invacations是oc消息调度系统重要的一部分。这种集成消息的调度系统使创建和撤销管理集中化。
+<br/>Invocation非常灵活，但它速度并不快。创建invocation比传递消息慢几百倍。调用invocation成本很低，还可以被重用。通过invokeWithTarget:或setTarget:方法它可以被分派到不同的目标。可以在使用之间改变参数。大多数的消耗实在创建invocation时methodSignatureForSelector:方法中，所以缓存这个结果可以显著提高性能。
+<br/>Invocations不会retain对象参数对象，他们也不赋值C字符串参数。为了保存以后使用，调用retainArguments。这会retain所有的对象参数并复制C字符串参数。当invacation被释放，将释放对象和C字符串。
+<br/>Invacations是oc消息调度系统重要的一部分。这种集成消息的调度系统使创建和撤销管理集中化。
 
 
 
 ## Using Trampolines
 
-蹦床把一条消息从一个对象“反弹”到另一个对象。这种技术允许一个代理对象把消息转移到另一个线程、缓存结果、合并重复的消息或者任何其他中间配置。
-蹦床一般使用forwardInvocation:方法处理消息。如果一个对象在Objective-C提示错误之前不响应一个选择器，它就会创建一个NSIvocation并且传递给该对象的forwardInvocation:方法。你可以用它以任何方式转发消息。
-
-例如，创建一个叫RNObserverManager的蹦床。任何发送到trampoline的信息都将被转发到响应选择器的已注册观察者。它提供了类似于NSNotification的功能，但如果有很多观察者的话，它会更易用并且速度更快。
+蹦床把一条消息从一个对象“反弹”到另一个对象。这种技术允许一个代理对象把消息转移到另一个线程、缓存结果、合并重复的消息或者任何其他中间配置。<br/>蹦床一般使用forwardInvocation:方法处理消息。如果一个对象在Objective-C提示错误之前不响应一个选择器，它就会创建一个NSIvocation并且传递给该对象的forwardInvocation:方法。你可以用它以任何方式转发消息。
+<br/>例如，创建一个叫RNObserverManager的蹦床。任何发送到trampoline的信息都将被转发到响应选择器的已注册观察者。它提供了类似于NSNotification的功能，但如果有很多观察者的话，它会更易用并且速度更快。
 <pre><code>
 #import <objc/runtime.h>
 @interface RNObserverManager : NSObject
@@ -199,8 +197,7 @@ forwardInvocation:方法可以自如地合并重复消息、添加记录、将�
 }
 </code></pre>
 当调用prepareWithInvocationTarget时，撤销管理返回可发任意消息的蹦床。这些都是转化为NSInvocation对象存储在栈的。当需要撤销一个操作，撤销管理只需要调用栈上最后一个命令。
-
-命令模式贯穿于Cocoa，为你架构提供实用的工具。它有助于从请求中分隔请求调度，提高代码可用性和灵活性。
+<br/><br/>命令模式贯穿于Cocoa，为你架构提供实用的工具。它有助于从请求中分隔请求调度，提高代码可用性和灵活性。
 
 
 

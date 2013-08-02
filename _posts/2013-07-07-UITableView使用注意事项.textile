@@ -4,14 +4,18 @@ title: 使用注意事项
 category: learning
 ---
 
- tableview是通过delegate和datasource来渲染界面的，所以在渲染的时候，就是代理方法被调用的时候，要保证数据一直性。针对数据的一致性，说几个易犯的错误。
+>tableview是通过delegate和datasource来渲染界面的，所以在渲染的时候，就是代理方法被调用的时候，要保证数据一直性。针对数据的一致性，说几个易犯的错误。
 
 <h3>内存警告后，重新请求数据</h3>
-  内存警告后，一般都会去重新渲染页面。如果在内存警告之前，界面上释放了，而数据没清空。在返回到这个页面时，会去重新渲染页面，并做数据请求，这时候会很容易出现问题。
+  
+ 内存警告后，一般都会去重新渲染页面。如果在内存警告之前，界面上释放了，而数据没清空。在返回到这个页面时，会去重新渲染页面，并做数据请求，这时候会很容易出现问题。
+  
   原因是这样的，在做数据请求的时候，如果请求之前你清空了数据，delegate和datasource调用会有先后，而且datasource的tableView:cellForRowAtIndexPath:方法是在cell出现的时候才去调用。所以在请求签清空了数据，很有可能tableview调tableView:cellForRowAtIndexPath:方法的时候数据已经没有了，导致crash。或者原本有40条数据，请求后20条数据，在调tableView:cellForRowAtIndexPath:的时候刚好有数据回来，刷新了数据，就会导致调某些cell的时候crash，因为对应数据已经不存在了。
 
 <h3>注意tableview的offset，提防数据改变</h3> 
+    
   当tableview滑动时，如果数据突然改变，在调datasource的时候找不到对应数据，就会crash。
+  
   这种场景经常出现，比如在用户操作滑动tableview的时候，某部分代码干好吧数据清空或减少，就会在渲染的时候找不到数据。
 
 

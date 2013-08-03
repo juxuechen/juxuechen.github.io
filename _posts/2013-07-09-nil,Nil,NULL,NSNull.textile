@@ -1,0 +1,25 @@
+---
+layout: post
+title: nil,Nil,NULL,NSNull
+category: learning
+---
+
+
+
+nil: A null pointer to an Objective-C object.
+<br>( #define nil ((id)0)  )
+<br>Nil: A null pointer to an Objective-C class.
+<br>NULL: A null pointer to anything else,  is for C-style memory pointers.
+<br>( #define NULL ((void *)0)  )
+<br>NSNull: A class defines a singleton object used to represent null values in collection <br>objects (which don't allow nil values).
+<br>[NSNull null]: The singleton instance of NSNull.
+<br>if obj is nil , [obj message] will return NO, without NSException
+<br>if obj is NSNull , [obj message will throw a NSException
+
+在Objective-C里，nil对象被设计来跟NULL空指针关联的。他们的区别就是nil是一个对象，而NULL只是一个值。而且我们对于nil调用方法，不会产生crash或者抛出异常。
+<br>NSURL * url = nil；
+<br>Class class = Nil；
+<br>int * pointerInt = NULL；
+<br>nil是一个对象指针为空，Nil是一个类指针为空，NULL是基本数据类型为空。
+
+

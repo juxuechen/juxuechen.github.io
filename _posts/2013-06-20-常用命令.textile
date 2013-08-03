@@ -4,29 +4,34 @@ title: 常用命令
 category: learning
 ---
 
-<h3>常用命令</h3>
-cat
-整个文件 cat filename
-创建文件 cat > filename
-合并文件 cat file1 file2 > file
--n 或 --number 由 1 开始对所有输出的行数编号
--b 或 --number-nonblank 和 -n 相似，只不过对于空白行不编号
--s 或 --squeeze-blank
-当遇到有连续两行以上的空白行，就代换为一行的空白行
--v 或 --show-nonprinting
+#常用命令
+####cat
 
 
-sort
+	整个文件 cat filename
+	创建文件 cat > filename
+	合并文件 cat file1 file2 > file
+	-n 或 --number 由 1 开始对所有输出的行数编号
+	-b 或 --number-nonblank 和 -n 相似，只不过对于空白行不编号
+	-s 或 --squeeze-blank
+	当遇到有连续两行以上的空白行，就代换为一行的空白行
+	-v 或 --show-nonprinting
+
+
+
+####sort
 将文件的每一行作为一个单位，相互比较，比较原则是从首字符向后，依次按ASCII码值进行比较，最后将他们按升序输出。
-sort -u filename 去掉重复行
-sort -r filename 改成降序
-sort -r filename -o  把排序结果输出到原文件中filename
-sort -n filename 以数值排序 1 2 10  
-sort -n -k 2 -t : filename  以:分隔，第2列数值排序。
 
+	sort -u filename 去掉重复行
+	sort -r filename 改成降序
+	sort -r filename -o  把排序结果输出到原文件中filename
+	sort -n filename 以数值排序 1 2 10  
+	sort -n -k 2 -t : filename  以:分隔，第2列数值排序。
 
+####grep
 grep:grep,egrep,fgrep-打印出匹配条件的文字行
-正则表达式元字符集（基本集）
+</br>正则表达式元字符集（基本集）
+<pre><code>
 ^ 锚定行的开始 如：'^grep'匹配所有以grep开头的行。
      cat iii | grep '^f'
 $ 锚定行的结束 如：'grep$'匹配所有以grep结尾的行。
@@ -63,8 +68,10 @@ x\{m,n\} 重复字符x，至少m次，不多于n次，如：'o\{5,10\}'匹配5--
 a|b|c 匹配a或b或c。如：grep|sed匹配grep或sed
 () 分组符号，如：love(able|rs)ov+匹配loveable或lovers，匹配一个或多个ov。
 x{m},x{m,},x{m,n} 作用同x\{m\},x\{m,\},x\{m,n\}
+</code></pre>
 
-cut-删除文件中字符行上的某些区域
+####cut-删除文件中字符行上的某些区域
+<pre><code>
 -b, --bytes=列表        //只选中指定的这些字节
 -c, --characters=列表       // 只选中指定的这些字符
 -d, --delimiter=分界符   // 使用指定分界符代替制表符作为区域分界
@@ -91,16 +98,15 @@ cut -c1-5 order.*
 cut -c 1-2,3-5 order.*
 cut -f 1-2 order.*
 cut -d'n' -f2  order.*
+</code></pre>
 
 
 
-sed-一个流编辑器
+####sed-一个流编辑器
 sed可删除(delete)、改变(change)、添加(append)、插入(insert)、合、交换文件中的资料行,或读入其它档的资料到文>件中,也可替换(substuite)它们其中的字串、或转换(tranfer)其中的字母等等。
-删除
+<pre><code>
 sed -e '1d' inputfile 删除第一行
 sed -e 'n,md' file 删除第n行到最m行
-
-
 
 sed -e '/xx/d' file  删除含有字母xx的行
 sed -e '/xx/!d' file 保留含有字母xx的行
@@ -110,9 +116,11 @@ sed -e 's/a/b/' file  a替换成b
 sed -e 's/w1/w2/g' file g代表替换所有匹配项目;这里,文件中所有字符串w1都会被替换成字串w1 w2
 sed -e 's/w1/w2/10' file m(10)替换行内第m个符合的字串; 记住，是行内的第m个匹配的字串
 sed -e 's/w1/& w2/p' file p替换第一个和w1匹配的字符串为w1 w2，并输出到标准输出.
+</code></pre>
 
 
-uniq-删除重复的行
+####uniq-删除重复的行
+<pre><code>
 cat tt |uniq -c  删除有相同内容的信息
 -c 显示输出中，在每行行首加上本行在文件中出现的次数。它可取代-u和-d选项。
 -d 只显示重复行。
@@ -121,9 +129,10 @@ cat tt |uniq -c  删除有相同内容的信息
 +n 前n个字符被忽略，之前的字符被跳过（字符从0开始编号）。
 -f n 与- n相同，这里n是字段数。
 -s n 与＋n相同，这里n是字符数。
+</code></pre>
 
-find-在文件目录中搜索文件
+####find-在文件目录中搜索文件
 find /Users/chenyang -name "crash*" 在chenyang的目录下查找crash开头的文件。
 
-less-在文件里向前或向后移动
+####less-在文件里向前或向后移动
 在 less 命令，使用“/”来执行向前搜索，使用“？”命令执行向后搜索。搜索条件是一个正则表达式。

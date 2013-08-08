@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Command Patte
-category: learning
+category: iOS
 ---
 
 ## Using Target-Action

@@ -1,0 +1,101 @@
+---
+layout: post
+title: 内存管理与引用计数
+category: iOS
+---
+
+
+  
+######操作系统iOS中应用程序使用的内存不是统一分配空间，代码运行使用的空间在3个不同的内存区域。
+  
+  3个段，text segment ， stack segment ， heap segment 。
+  
+  Objective-C的对象在内存中是以堆的方式分配空间的,并且堆内存是由你释放的，即release。
+栈由编译器管理自动释放的，在方法中（函数体）定义的变量通常是在栈内，因此如果你的变量要跨函数的话就需要将其定义为成员变量。
+  
+  1.栈区(stack):由编译器自动分配释放，存放函数的参数值，局部变量等值。其操作方式类似于数据结构中的栈。
+  
+  2.堆区(heap):一般由程序员分配释放，若程序员不释放，则可能会引起内存泄漏。
+
+![Mou icon](http://img03.taobaocdn.com/tps/i3/T1ha4_FoVgXXc0LcgM-440-344.jpg)
+
+  
+######操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</br>
+text segment：
+
+- 代码存在的内存段。
+- 程序开始后，main调用，一些空间为函数变量存储分配在“stack”。
+
+heap segment：也成为“data”段。
+
+- 提供一个保存中介贯穿函数的执行过程，全局和静态变量保存在“heap”中，直到应用退出。
+- 在stack保存指针，cou通过stack访问heap数据
+- heap对象有多个owner，等同于引用计数。只有heap对象才是采用“引用计数”方法管理它。
+
+stack segment：
+
+- 每次调用一个函数，stack的一部分分配在stack中。新函数的本地变量分配在这里。
+- 后进先出（LIFO ）结构
+
+######stack 对象的创建
+只要栈的剩余空间大于stack 对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。
+######heap 对象的创建
+操作系统对于内存heap 段是采用链表进行管理的。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap 节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。
+
+
+######所以在堆中分配的内存，都是用引用计数模式；在栈中则不是。
+
+NSString 定义的对象是保存在栈中，所以它没有引用计算。看一些书上说它的引用计算会是 fffffffff 最大整数，测试的结果显示它是－ 1. 对该对象进行 retain和release 操作，都不会改变 retainCount 值。
+
+MutableNSString 定义的对象，需要先分配堆中的内存空间，再初始化才能使用。它是采用引用计数管理内存的。对该对象做 retainCount 操作则每次增加一个。
+
+其实，引用计数是对内存区域的空间管理方式，是应从内存块的视角去看的。任何对象都是指向它的指针，有多少个指针指向它，就有多少个引用计算。
+
+如果没有任何指针指向该内存块了，很明显，该内存块就没有对象引用了，引用计算就是 0, 系统会人为该内存区域已经空闲，于是立即清理，也就是更新一下管理堆的链表中某个标示位。
+
+	NSString *str1= @"hello";
+    NSString *str2= @"boy";
+    NSString *str3;
+    NSString *str4= @"hello";
+    NSMutableString *str5= [[NSMutableString alloc] initWithString:@"girl"];
+    NSMutableString * str6;
+    
+    NSLog(@"str1 addr is %p",str1);
+    NSLog(@"str2 addr is %p",str2);
+    NSLog(@"str3 addr is %p",str3);
+    NSLog(@"str4 addr is %p",str4);//str4和str1 都分配在一个内存区域中，这点是 c 编译器的功能，有利于内存使用和效率。
+    NSLog(@"str5 addr is %p",str5);
+    NSLog(@"str6 addr is %p",str6);
+    NSLog(@"str1 retainCount is %i",[str1 retainCount]);//-1 因为在stack中
+    NSLog(@"str2 retainCount is %i",[str2 retainCount]);//-1 因为在stack中
+    NSLog(@"str5 retainCount is %i",[str5 retainCount]);//1 分配到heap中
+    
+    str3 = [str1 retain];
+    NSLog(@"str3=[str1 retain];");
+    NSLog(@"str1 retainCount is %i",[str1 retainCount]);
+    NSLog(@"str3 retainCount is %i",[str3 retainCount]);
+    
+    str6 = [str5 retain];
+    NSLog(@"str6 = [str5 retain];");
+    NSLog(@"str5 retainCount is %i",[str5 retainCount]);
+    NSLog(@"str6 retainCount is %i",[str6 retainCount]);
+
+打出日志：
+
+```
+2013-08-07 17:40:02.912 test[56588:c07] str1 addr is 0x48e4
+2013-08-07 17:40:02.913 test[56588:c07] str2 addr is 0x48f4
+2013-08-07 17:40:02.913 test[56588:c07] str3 addr is 0x10cde22
+2013-08-07 17:40:02.913 test[56588:c07] str4 addr is 0x48e4
+2013-08-07 17:40:02.913 test[56588:c07] str5 addr is 0x7655470
+2013-08-07 17:40:02.913 test[56588:c07] str6 addr is 0xf607f
+2013-08-07 17:40:02.913 test[56588:c07] str1 retainCount is -1
+2013-08-07 17:40:02.914 test[56588:c07] str2 retainCount is -1
+2013-08-07 17:40:02.914 test[56588:c07] str5 retainCount is 1
+2013-08-07 17:40:02.914 test[56588:c07] str3=[str1 retain];
+2013-08-07 17:40:02.914 test[56588:c07] str1 retainCount is -1
+2013-08-07 17:40:02.914 test[56588:c07] str3 retainCount is -1
+2013-08-07 17:40:02.914 test[56588:c07] str6 = [str5 retain];
+2013-08-07 17:40:02.915 test[56588:c07] str5 retainCount is 2
+2013-08-07 17:40:02.915 test[56588:c07] str6 retainCount is 2
+```

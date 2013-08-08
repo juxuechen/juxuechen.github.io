@@ -11,11 +11,11 @@ desc: FlumpFish's blog
 
 custom:
     category:
-        default: learning
+        default: iOS
         another: life
     categories:
-      - name:  learning
-        title: learning
+      - name:  iOS
+        title: iOS
 
       - name:  life
         title: life

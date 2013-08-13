@@ -6,7 +6,7 @@ category: iOS
 
 
   
-######操作系统iOS中应用程序使用的内存不是统一分配空间，代码运行使用的空间在3个不同的内存区域。
+#####操作系统iOS中应用程序使用的内存不是统一分配空间，代码运行使用的空间在3个不同的内存区域。
   
   3个段，text segment ， stack segment ， heap segment 。
   
@@ -20,7 +20,7 @@ category: iOS
 ![Mou icon](http://img03.taobaocdn.com/tps/i3/T1ha4_FoVgXXc0LcgM-440-344.jpg)
 
   
-######操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</br>
+#####操作系统使用stack 段中的指针值访问heap 段中的对象。如果stack 对象的指针没有了，则heap 中的对象就不能访问。这也是内存泄露的原因。</br>
 text segment：
 
 - 代码存在的内存段。
@@ -37,13 +37,13 @@ stack segment：
 - 每次调用一个函数，stack的一部分分配在stack中。新函数的本地变量分配在这里。
 - 后进先出（LIFO ）结构
 
-######stack 对象的创建
+#####stack 对象的创建
 只要栈的剩余空间大于stack 对象申请创建的空间，操作系统就会为程序提供这段内存空间，否则将报异常提示栈溢出。
-######heap 对象的创建
+#####heap 对象的创建
 操作系统对于内存heap 段是采用链表进行管理的。操作系统有一个记录空闲内存地址的链表，当收到程序的申请时，会遍历链表，寻找第一个空间大于所申请的heap 节点，然后将该节点从空闲节点链表中删除，并将该节点的空间分配给程序。
 
 
-######所以在堆中分配的内存，都是用引用计数模式；在栈中则不是。
+#####所以在堆中分配的内存，都是用引用计数模式；在栈中则不是。
 
 NSString 定义的对象是保存在栈中，所以它没有引用计算。看一些书上说它的引用计算会是 fffffffff 最大整数，测试的结果显示它是－ 1. 对该对象进行 retain和release 操作，都不会改变 retainCount 值。
 
@@ -101,7 +101,7 @@ MutableNSString 定义的对象，需要先分配堆中的内存空间，再初�
 ```
 
 
-######NSString用copy和retain。
+#####NSString用copy和retain。
 1. 对NSString应用retain，效率无疑是最好的
 2. 用copy最安全，因为NSString 为 NSMutableString 的基类，如果将NSMutableString 以retain的形式赋值给NSString后，后续修改NSMutableString会导致NSString内容的变化，这通常不是我们希望的，所以用copy最安全。
 3. copy并不一定导致一个新对对象创建，而牺牲效率。copy会调用NSCopying中的 -(id)copyWithZone:(NSZone *)。内部实现时，如果是NSString，就地[self  retain]，[return self]。否则拷贝对象赋值，这样可以实现效率和安全的结合。文档（NSCopying）说明：Implement NSCopying by retaining the original instead of creating a new copy when the class and its contents are immutable.

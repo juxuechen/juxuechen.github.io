@@ -99,3 +99,27 @@ MutableNSString 定义的对象，需要先分配堆中的内存空间，再初�
 2013-08-07 17:40:02.915 test[56588:c07] str5 retainCount is 2
 2013-08-07 17:40:02.915 test[56588:c07] str6 retainCount is 2
 ```
+
+
+######NSString用copy和retain。
+1. 对NSString应用retain，效率无疑是最好的
+2. 用copy最安全，因为NSString 为 NSMutableString 的基类，如果将NSMutableString 以retain的形式赋值给NSString后，后续修改NSMutableString会导致NSString内容的变化，这通常不是我们希望的，所以用copy最安全。
+3. copy并不一定导致一个新对对象创建，而牺牲效率。copy会调用NSCopying中的 -(id)copyWithZone:(NSZone *)。内部实现时，如果是NSString，就地[self  retain]，[return self]。否则拷贝对象赋值，这样可以实现效率和安全的结合。文档（NSCopying）说明：Implement NSCopying by retaining the original instead of creating a new copy when the class and its contents are immutable.
+
+
+对于NSArray讲，一样。
+
+	NSArray *array1 = [[NSArray alloc] initWithObjects:@"1",@"2", nil];
+    NSLog(@"array1 addr is %p",array1);
+    NSLog(@"array1 retainCount is %i",[array1 retainCount]);
+    
+    NSArray *array2 = [array1 copy];
+    NSLog(@"array2 addr is %p",array2);
+    NSLog(@"array2 retainCount is %i",[array2 retainCount]);
+
+```    
+2013-08-08 18:28:23.494 Taobao4iPad[37015:c07] array1 addr is 0x18eab900
+2013-08-08 18:28:23.495 Taobao4iPad[37015:c07] array1 retainCount is 1
+2013-08-08 18:28:23.496 Taobao4iPad[37015:c07] array2 addr is 0x18eab900
+2013-08-08 18:28:23.496 Taobao4iPad[37015:c07] array2 retainCount is 2
+```

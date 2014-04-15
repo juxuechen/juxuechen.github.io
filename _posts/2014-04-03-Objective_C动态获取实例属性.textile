@@ -4,10 +4,11 @@ title: Objective_C动态获取实例属性
 category: iOS
 ---
 
-Objective_C动态获取实例属性
+##Objective_C动态获取实例属性
 
 objective_c动行时库已经有这样的功能。使用这些方法需要加头文件
-#import <objc/message.h>  
+
+ #import <objc/message.h>  
 
 要用到的方法是
 objc_property_t *class_copyPropertyList(Class cls, unsigned int *outCount)    
@@ -18,6 +19,8 @@ objc_property_t *class_copyPropertyList(Class cls, unsigned int *outCount)
 @end   
 
 动态获取它的属性名，与实例属性值。
+
+```
 People *people = [[People alloc] init];  
 id peopleClass = objc_getClass("People");  
 unsigned int outCount, i;  
@@ -27,10 +30,13 @@ for (i = 0; i < outCount; i++) {
     NSString *propName = [NSString stringWithUTF8String:property_getName(property)];  
     id value = [people <span style="font-family: Arial, Helvetica, sans-serif;"> </span>valueForKey:propName];  
     fprintf(stdout, "%s %s\n", property_getName(property), property_getAttributes(property));  
-}  
+} 
+``` 
 
 这样一来就可以获取所有的属性值。比如格式化对像为json或xml的时候就很有用。
 但是如果类从其它的类继承过来的，父类的属性将不会被copy出来。如
+
+```
 @interface People : NSObject {  
 @property NSString *name;  
 @end  
@@ -49,11 +55,17 @@ for (i = 0; i < outCount; i++) {
     id value = [leader  valueForKey:propName];  
     fprintf(stdout, "%s %s\n", property_getName(property), property_getAttributes(property));  
 }  
+```
 
 这儿可能获取employers的属性的值， 如何才能获取到父类的属性呢。
 有两种方法。
+
 1：用前面提到的方法分别获取子类与父类的属性列表。
+
 2：声明一个Protocol, Protocol中有属性，然后获取Protocol中属性列表
+
 第二个方法中要用到两个方法：
+
 objc_property_t *protocol_copyPropertyList(Protocol *proto, unsigned int *outCount)  
+
 Protocol *objc_getProtocol(const char *name)  

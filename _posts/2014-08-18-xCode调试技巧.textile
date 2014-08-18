@@ -1,0 +1,9 @@
+---
+layout: post
+title: xCode调试技巧
+category: iOS
+---
+
+##查看view层次
+
+UIView的私有方法recursiveDescription，在调试时可以打印出view上的层次关系。

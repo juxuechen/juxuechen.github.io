@@ -7,3 +7,12 @@ category: iOS
 ##查看view层次
 
 UIView的私有方法recursiveDescription，在调试时可以打印出view上的层次关系。
+
+![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/recursivedescreption.png)
+
+##条件断点
+可以使用快捷键command+\添加断点，右键点击断点，然后选择“edit breakpoint”来设置特定条件。
+
+条件断点只有在遇到特定情况时才会中断，你可以提供给一个条件((BOOL)[TBCartEngine isEndPage]) == YES。（BOOL）是必须的，否则console会提示类型不符号，导致条件不能生效。或者断点应该忽略的次数。另外，你还可以添加能根据断点自动发生的动作，例如一个debugger command---打印一个值。
+
+![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/breakpoint.png)

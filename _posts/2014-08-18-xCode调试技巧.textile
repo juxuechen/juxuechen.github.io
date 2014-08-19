@@ -16,3 +16,8 @@ UIView的私有方法recursiveDescription，在调试时可以打印出view上�
 条件断点只有在遇到特定情况时才会中断，你可以提供给一个条件((BOOL)[TBCartEngine isEndPage]) == YES。（BOOL）是必须的，否则console会提示类型不符号，导致条件不能生效。或者断点应该忽略的次数。另外，你还可以添加能根据断点自动发生的动作，例如一个debugger command---打印一个值。
 
 ![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/breakpoint.png)
+
+##符号断点
+针对某一方法设置断点。比如要为UIViewcontroller的方法viewWillAppear设置断点，symbol写入-[UIViewController viewWillAppear:]。减号（-）表示实例方法，加号（+）表示类方法。那么在每次调用该方法时都会中断。
+
+![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/symbol.png)

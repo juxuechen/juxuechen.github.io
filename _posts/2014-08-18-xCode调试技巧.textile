@@ -21,3 +21,9 @@ UIView的私有方法recursiveDescription，在调试时可以打印出view上�
 针对某一方法设置断点。比如要为UIViewcontroller的方法viewWillAppear设置断点，symbol写入-[UIViewController viewWillAppear:]。减号（-）表示实例方法，加号（+）表示类方法。那么在每次调用该方法时都会中断。
 
 ![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/symbol.png)
+
+##Code Snippets
+code snippets是一些代码的模版，对于一些常见的编程模式，xcode都将这些代码抽象成模版放到code snippet中，使用的时候，只需要键入快捷键，就可以把模版的内容填到代码中。
+
+设置显示Code Snippets后，把代码拖到这个区域，编辑即可。
+![](https://raw.githubusercontent.com/juxuechen/juxuechen.github.io/master/image/Snippets.png)
